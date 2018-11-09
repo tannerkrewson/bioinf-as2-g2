@@ -1,9 +1,13 @@
 from readfasta import readfasta
 import glob, os
 
+from tree_analysis import build_clade_count_dict, count_clades
+from bootstrapping import get_bootstrapped_genes
+from seq_distance import find_distance
+from upgma import calculate_upgma
+
 '''
-main: read in the fasta files, run our algorithm to guess the reading
-    frame, and statistically compare it to random
+main: read in the fasta files, and do things TODO
 '''
 def main():
     print( "*****\nBioinformatics - Assignment 2 - Group 2\n*****\n" )
@@ -27,7 +31,7 @@ def main():
         for i in range (0, BOOTSTRAP_TIMES):
             bootstrapped_genes = get_bootstrapped_genes( genes )
 
-            this_tree = generate_tree( genes )
+            this_tree = generate_tree( bootstrapped_genes )
 
             count_clades( this_tree, clade_count_dict )
 
