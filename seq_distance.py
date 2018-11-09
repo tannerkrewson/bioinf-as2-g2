@@ -1,3 +1,5 @@
+import math
+
 def find_distance( gene1, gene2 ):
 
     aligned_genes = align_gene( gene1, gene2 )
@@ -27,6 +29,6 @@ def dK2P( x, y):
     V = count_transversion / len(x)
 
 
-    distance = -0.5 * math.log(1 - 2*S - V) - 0.25 * math.log(1 - 2*V)
+    distance = -0.5 * math.log(1 - 2*S - V) - 0.25 * math.log(1 - 2*V) #K2P Formula 
 
     return distance
