@@ -22,8 +22,10 @@ def main():
 
         original_tree = generate_tree(genes)
 
+        clade_count_dict = {}
+
         # count the clades of the original tree and add them as keys
-        clade_count_dict = build_clade_count_dict( original_tree )
+        build_clade_count_dict( original_tree, clade_count_dict )
 
         BOOTSTRAP_TIMES = 10
 
