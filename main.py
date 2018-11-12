@@ -20,7 +20,7 @@ def main():
         print( file )
         genes = readfasta( file )
 
-        original_tree = generate_tree(genes)
+        original_tree = generate_tree( genes )
 
         clade_count_dict = {}
 
@@ -31,20 +31,16 @@ def main():
 
         # count each clade in bootstrapped trees that match a clade from the original tree
         for i in range (0, BOOTSTRAP_TIMES):
-            bootstrapped_genes = get_bootstrapped_genes( genes )
+            bootstrapped_genes = generate_bootstrap_genes( genes )
 
             this_tree = generate_tree( bootstrapped_genes )
 
-            count_clades( this_tree, clade_count_dict )
+            clade_search( this_tree, clade_count_dict )
 
-        # find the confidence of each clade
-        for clade in clade_count_dict:
-            the_count = clade_count_dict[clade]
+        # return a dictionary containing the clades as keys mapped to their confidence
+        clade_confidences = calculate_confidences( clade_count_dict, BOOTSTRAP_TIMES )
 
-            clade_count_dict[clade] = the_count / BOOTSTRAP_TIMES
-
-        # at this point, the clade_count_dict now maps clades to their respective confidence level
-        print( clade_count_dict )
+        # TODO: add function to append clade confidence values to the original tree
 
 
 def generate_tree(genes):
