@@ -1,47 +1,48 @@
-def calculate_upgma( distance_matrix ):
-    seq_map = []
-    for i in range(0, len(distance_matrix)):
-        seq_map.append(i)
+import copy
 
-    new_matrix = distance_matrix.copy()
+def calculate_upgma( distance_matrix ):
+
+    # will hold the newick expression of the tree
+    seq_tree = []
+
+    # will map the indexes of the new matrix to the list 
+    # of sequences that they represent
+    seq_map = []
+
+    # start them off with just 0 through len of matrix
+    for i in range(0, len(distance_matrix)):
+        seq_tree.append(i)
+        seq_map.append([i])
+
+    new_matrix = copy.deepcopy(distance_matrix)
     
     while len(new_matrix) > 2:
-        print_mat(new_matrix)
-        print(seq_map)
+
         min_index = find_lowest_distance( new_matrix )
 
         X = min_index[0]
         Y = min_index[1]
 
-        print(min_index)
+        seq_tree[X] = ( seq_tree[X], seq_tree[Y] )
+        seq_tree.pop(Y)
 
-        seq_map[X] = ( seq_map[X], seq_map[Y] )
+        seq_map[X] += seq_map[Y]
         seq_map.pop(Y)
 
-        for i in range(0, len(new_matrix)):
-            # average the two values, and store in the left/top most
-            # one's original position
-            new_matrix[i][X] += new_matrix[i][Y]
-            new_matrix[i][X] /= 2
+        # remove the row and column that will not be used
+        # to store the average distance once both sequences
+        # X and Y are combined
+        drop_seq( new_matrix, Y )
 
-            # matrix is a square so i'll do the other direction
-            # in the same loop without consequence
-            new_matrix[X][i] += new_matrix[Y][i]
-            new_matrix[X][i] /= 2
+        for i in range(0, X):
+            new_matrix[i][X] = find_avg_distance(seq_map[i], seq_map[X], distance_matrix)
 
-        # remove the non-averaged row
-        new_matrix.pop(Y)
+        for j in range(X+1, len(new_matrix)):
+            new_matrix[X][j] = find_avg_distance(seq_map[X], seq_map[j], distance_matrix)
+        
+        print_mat(new_matrix)
 
-        # remove the non-averaged col
-        for i in range(0, len(new_matrix)):
-            new_matrix[i].pop(Y)
-    
-    return ( seq_map[0], seq_map[1] )
-    
-
-def refactor_matrix( distance_matrix ):
-    # for fixing the matrix after creating a clade
-    return False
+    return ( seq_tree[0], seq_tree[1] )
 
 def find_lowest_distance( distance_matrix ):
     min_val = distance_matrix[0][1]
@@ -56,8 +57,30 @@ def find_lowest_distance( distance_matrix ):
 
     return min_index
 
-def generate_matrix( sequences ):
-    return False
+def drop_seq( matrix, coordinate ):
+    # remove the row at the coordinate
+    matrix.pop(coordinate)
+
+    # remove the column at the coordinate
+    for i in range(0, len(matrix)):
+        matrix[i].pop(coordinate)
+
+def find_avg_distance( seq_list_1, seq_list_2, distance_matrix ):
+    sum = 0
+    count = 0
+    for seq_1_index in seq_list_1:
+        for seq_2_index in seq_list_2:
+            # since our matrix is symetric and we only fill the 
+            # values in the upper right half, this min max thing 
+            # is to ensure we use the half of the matrix that 
+            # isn't all of the zeros
+            x = min(seq_1_index, seq_2_index)
+            y = max(seq_1_index, seq_2_index)
+
+            sum += distance_matrix[x][y]
+            count += 1
+            
+    return sum / count
 
 def test():
     test_dist_matrix = [ 
