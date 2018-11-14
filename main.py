@@ -57,7 +57,7 @@ def generate_tree(genes):
         for j in range(0, i+1):
             new_row.append(0)
         for j in range(i+1, len(genes)):
-            new_row.append( find_distance(genes[i], genes[j]) )
+            new_row.append( find_distance(genes[i][1], genes[j][1]) )
         
         distance_matrix.append( new_row )
 
