@@ -22,6 +22,9 @@ def main():
 
         original_tree = generate_tree( genes )
 
+        print(original_tree)
+
+        '''
         clade_count_dict = {}
 
         # count the clades of the original tree and add them as keys
@@ -41,6 +44,7 @@ def main():
         clade_confidences = calculate_confidences( clade_count_dict, BOOTSTRAP_TIMES )
 
         # TODO: add function to append clade confidence values to the original tree
+        '''
 
 
 def generate_tree(genes):

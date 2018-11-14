@@ -79,7 +79,7 @@ def find_avg_distance( seq_list_1, seq_list_2, distance_matrix ):
 
             sum += distance_matrix[x][y]
             count += 1
-            
+
     return sum / count
 
 def test():
@@ -100,4 +100,4 @@ def print_mat(mat):
         print(row)
     print()
 
-test()
+# test()
