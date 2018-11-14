@@ -1,8 +1,8 @@
 def build_clade_count_dict( original_tree, clade_count_dict ):
     if type(original_tree[0] == tuple):
-        build_clade_count_dict(original_tree, clade_count_dict)
+        build_clade_count_dict(original_tree[0], clade_count_dict)
     if type(original_tree[1] == tuple):
-        build_clade_count_dict(original_tree, clade_count_dict)
+        build_clade_count_dict(original_tree[1], clade_count_dict)
 
     clade_count_dict[original_tree] = 0
 
