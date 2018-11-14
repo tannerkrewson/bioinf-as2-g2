@@ -1,33 +1,26 @@
+import copy
+
 def calculate_upgma( distance_matrix ):
+    seq_tree = []
     seq_map = []
     for i in range(0, len(distance_matrix)):
-        seq_map.append(i)
+        seq_tree.append(i)
+        seq_map.append([i])
 
-    new_matrix = distance_matrix.copy()
+    new_matrix = copy.deepcopy(distance_matrix)
     
     while len(new_matrix) > 2:
-        print_mat(new_matrix)
-        print(seq_map)
+
         min_index = find_lowest_distance( new_matrix )
 
         X = min_index[0]
         Y = min_index[1]
 
-        print(min_index)
+        seq_tree[X] = ( seq_tree[X], seq_tree[Y] )
+        seq_tree.pop(Y)
 
-        seq_map[X] = ( seq_map[X], seq_map[Y] )
+        seq_map[X] += seq_map[Y]
         seq_map.pop(Y)
-
-        for i in range(0, len(new_matrix)):
-            # average the two values, and store in the left/top most
-            # one's original position
-            new_matrix[i][X] += new_matrix[i][Y]
-            new_matrix[i][X] /= 2
-
-            # matrix is a square so i'll do the other direction
-            # in the same loop without consequence
-            new_matrix[X][i] += new_matrix[Y][i]
-            new_matrix[X][i] /= 2
 
         # remove the non-averaged row
         new_matrix.pop(Y)
@@ -35,8 +28,32 @@ def calculate_upgma( distance_matrix ):
         # remove the non-averaged col
         for i in range(0, len(new_matrix)):
             new_matrix[i].pop(Y)
-    
-    return ( seq_map[0], seq_map[1] )
+
+        for i in range(0, X):
+            # average the two values, and store in the left/top most
+            # one's original position
+            sum = 0
+            count = 0
+            for m in seq_map[X]:
+                for n in seq_map[i]:
+                    a = min(m, n)
+                    b = max(m, n)
+                    sum += distance_matrix[a][b]
+                    count += 1
+            new_matrix[i][X] = sum / count
+
+        for i in range(X+1, len(new_matrix)):
+            sum = 0
+            count = 0
+            for m in seq_map[X]:
+                for n in seq_map[i]:
+                    a = min(m, n)
+                    b = max(m, n)
+                    sum += distance_matrix[a][b]
+                    count += 1
+            new_matrix[X][i] = sum / count
+
+    return ( seq_tree[0], seq_tree[1] )
     
 
 def refactor_matrix( distance_matrix ):
