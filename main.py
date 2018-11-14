@@ -1,8 +1,8 @@
 from readfasta import readfasta
 import glob, os
 
-from tree_analysis import build_clade_count_dict, count_clades
-from bootstrapping import get_bootstrapped_genes
+from tree_analysis import build_clade_count_dict, clade_search
+from bootstrapping import generate_bootstrap_genes, calculate_confidences
 from seq_distance import find_distance
 from upgma import calculate_upgma
 

@@ -93,7 +93,7 @@ def test():
         [0,  0,  0,  0,  0,  0,  0]
     ]
 
-    calculate_upgma(test_dist_matrix)
+    print(calculate_upgma(test_dist_matrix))
 
 def print_mat(mat):
     for row in mat:
