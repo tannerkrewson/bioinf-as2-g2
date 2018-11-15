@@ -1,6 +1,9 @@
 import copy
+import numpy
 
 def calculate_upgma( distance_matrix ):
+
+    distance_matrix = distance_matrix.tolist()
 
     # will hold the newick expression of the tree
     seq_tree = []
@@ -83,7 +86,7 @@ def find_avg_distance( seq_list_1, seq_list_2, distance_matrix ):
     return sum / count
 
 def test():
-    test_dist_matrix = [ 
+    test_dist_matrix = numpy.array([ 
         [0, 13, 11,  7, 12, 16, 15],
         [0,  0,  2, 11, 14, 13,  5],
         [0,  0,  0,  9, 18, 15,  3],
@@ -91,7 +94,7 @@ def test():
         [0,  0,  0,  0,  0, 18, 13],
         [0,  0,  0,  0,  0,  0, 14],
         [0,  0,  0,  0,  0,  0,  0]
-    ]
+    ])
 
     print( calculate_upgma( test_dist_matrix ) )
 
