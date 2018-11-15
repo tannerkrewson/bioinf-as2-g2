@@ -53,14 +53,25 @@ def generate_tree( genes ):
     # find the distance between each gene
     distance_matrix = numpy.zeros((len(genes), len(genes)), dtype=int)
 
+    file = open("distances.txt", "w")
+
+    def store_distance(result):
+        distance = result[0]
+        i = result[1]
+        j = result[2]
+
+        distance_matrix[i, j] = distance
+        file.write(str(i) + "," + str(genes[i][0]) + "," + str(j) + "," + str(genes[j][0]) + "," + str(distance) + "\n")
+
     pool = multiprocessing.Pool()
 
     for i in range( 0, len( genes ) ):
         for j in range( i+1, len( genes ) ):
-            pool.apply_async(find_distance, args = (genes[i][1], genes[j][1], i, j, distance_matrix))
+            pool.apply_async(find_distance, args = (genes[i], genes[j], i, j), callback = store_distance)
     
     pool.close()
     pool.join()
+    file.close()
 
     # use upgma to generate a tree from the distance matrix
     return calculate_upgma( distance_matrix )
