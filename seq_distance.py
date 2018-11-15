@@ -42,9 +42,36 @@ def align_gene(sequence1, sequence2):
     gp = -2
     mb = 1
     mp = -1
-    
-    seq1 = "-" + sequence1 #seq1 is the sequence on the horizontal
-    seq2 = "-" + sequence2 #seq2 is on the vertical
+
+    #make sure they aren't the same
+    if sequence1 == sequence2:
+        return [sequence1, sequence2]
+
+    #break the squence into parts
+
+
+    #take off the parts that are the same at the begining 
+    n = 0 
+    while (sequence1[n] == sequence2[n]) and (n <= min(len(sequence1)-1, len(sequence2)-1)):
+        n = n + 1
+    sameSeqBegining = sequence1[0:n]
+
+
+    #take off the parts that are the same at the end
+    reducedSeq1 = sequence1[n:]
+    reducedSeq2 = sequence2[n:]
+    m1 = len(reducedSeq1)-1
+    m2 = len(reducedSeq2)-1
+    while (min(m1, m2) > 0) and reducedSeq1[m1] == reducedSeq2[m2]:
+        m1 = m1 - 1
+        m2 = m2 - 1
+    sameSeqEnding = reducedSeq1[m1+1:]
+
+    #only looking at middle part that is differnt
+    seq1Middle = reducedSeq1[:m1+1]
+    seq2Middle = reducedSeq2[:m2+1]
+    seq1 = "-" + seq1Middle #seq1 is the sequence on the horizontal
+    seq2 = "-" + seq2Middle #seq2 is on the vertical
 
     A = numpy.zeros((len(seq2), len(seq1)), dtype=int) #dynamic programing matrix wihtout letters
 
@@ -98,24 +125,24 @@ def align_gene(sequence1, sequence2):
             i = i - 1
 
     #align with the trace back directions 
-    seq1spot = len(sequence1) - 1
-    seq2spot = len(sequence2) - 1
+    seq1spot = len(seq1Middle) - 1
+    seq2spot = len(seq2Middle) - 1
     newSeq1 = ""
     newSeq2 = ""
     for i in range(len(traceBackDirections)):
         if traceBackDirections[i] == "d":
-            newSeq1 = sequence1[seq1spot] + newSeq1
-            newSeq2 = sequence2[seq2spot] + newSeq2
+            newSeq1 = seq1Middle[seq1spot] + newSeq1
+            newSeq2 = seq2Middle[seq2spot] + newSeq2
             seq1spot = seq1spot - 1
             seq2spot = seq2spot - 1
         if traceBackDirections[i] == "u":
             newSeq1 = '-' + newSeq1
-            newSeq2 = sequence2[seq2spot] + newSeq2
+            newSeq2 = seq2Middle[seq2spot] + newSeq2
             seq2spot = seq2spot - 1
         if traceBackDirections[i] == "b":
             newSeq2 = '-' + newSeq2
-            newSeq1 = sequence1[seq1spot] + newSeq1
+            newSeq1 = seq1Middle[seq1spot] + newSeq1
             seq1spot = seq1spot - 1
 
-    return [newSeq1, newSeq2]
+    return [sameSeqBegining + newSeq1 + sameSeqEnding, sameSeqBegining + newSeq2 + sameSeqEnding]
 
