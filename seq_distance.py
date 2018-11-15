@@ -53,6 +53,8 @@ def align_gene(sequence1, sequence2):
         A[i, 0] = i * gp
 
     for i in range(1, len(seq2)):
+        if (i % 100) == 0:
+            print(i)
         for j in range(1, len(seq1)):
             x = 0
             if (seq2[i] == seq1[j]):
