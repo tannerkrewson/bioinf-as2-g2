@@ -22,7 +22,7 @@ def main():
 
         original_tree = generate_tree( genes )
 
-        print(original_tree)
+        print( original_tree )
 
         '''
         clade_count_dict = {}
@@ -47,17 +47,17 @@ def main():
         '''
 
 
-def generate_tree(genes):
+def generate_tree( genes ):
     # find the distance between each gene
     distance_matrix = []
-    for i in range(0, len(genes)):
+    for i in range( 0, len( genes ) ):
 
         # make it 2d by adding new list everytime
         new_row = []
-        for j in range(0, i+1):
-            new_row.append(0)
-        for j in range(i+1, len(genes)):
-            new_row.append( find_distance(genes[i][1], genes[j][1]) )
+        for j in range( 0, i+1 ):
+            new_row.append( 0 )
+        for j in range( i+1, len( genes ) ):
+            new_row.append( find_distance( genes[i][1], genes[j][1] ) )
         
         distance_matrix.append( new_row )
 

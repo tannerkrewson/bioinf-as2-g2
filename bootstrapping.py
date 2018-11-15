@@ -5,10 +5,10 @@ def generate_bootstrap_genes( sequences ):
 
     sequence_length = 1 # TODO: add correct value
 
-    for i in range(0, sequence_length):
-        rand_pos = random.randint(0, sequence_length)
-        for j in range(0, len(sequences)):
-            new_sequences[j] += sequences[j][randpos]
+    for i in range( 0, sequence_length ):
+        rand_pos = random.randint( 0, sequence_length )
+        for j in range( 0, len( sequences ) ):
+            new_sequences[ j ] += sequences[ j ][ rand_pos ]
 
     return new_sequences
 
@@ -20,6 +20,6 @@ def calculate_confidences( clade_count_dict, bootstrap_num ):
     confidences = {}
 
     for i, j in clade_count_dict.items():
-        confidences[i] = j / bootstrap_num
+        confidences[ i ] = j / bootstrap_num
 
     return confidences
