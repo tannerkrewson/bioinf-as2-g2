@@ -1,5 +1,6 @@
 from readfasta import readfasta
 import glob, os
+import numpy
 
 from tree_analysis import build_clade_count_dict, clade_search
 from bootstrapping import generate_bootstrap_genes, calculate_confidences
@@ -49,17 +50,11 @@ def main():
 
 def generate_tree( genes ):
     # find the distance between each gene
-    distance_matrix = []
-    for i in range( 0, len( genes ) ):
+    distance_matrix = numpy.zeros((len(genes), len(genes)), dtype=int)
 
-        # make it 2d by adding new list everytime
-        new_row = []
-        for j in range( 0, i+1 ):
-            new_row.append( 0 )
+    for i in range( 0, len( genes ) ):
         for j in range( i+1, len( genes ) ):
-            new_row.append( find_distance( genes[i][1], genes[j][1] ) )
-        
-        distance_matrix.append( new_row )
+            distance_matrix[i][j] = find_distance( genes[i][1], genes[j][1] )
 
     # use upgma to generate a tree from the distance matrix
     return calculate_upgma( distance_matrix )
