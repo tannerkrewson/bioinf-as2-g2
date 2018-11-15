@@ -1,4 +1,5 @@
 import math
+import numpy
 
 def find_distance( gene1, gene2 ):
 
@@ -41,30 +42,27 @@ def align_gene(sequence1, sequence2):
     seq1 = "-" + sequence1 #seq1 is the sequence on the horizontal
     seq2 = "-" + sequence2 #seq2 is on the vertical
 
-    A = [] #dynamic programing matrix wihtout letters
+    A = numpy.zeros((len(seq2), len(seq1)), dtype=int) #dynamic programing matrix wihtout letters
 
     #initialize first row
-    row = []
-    for j in range(len(seq1)): 
-        row.append(j * gp)
-    A.append(row)
+    for j in range(0, len(seq1)): 
+        A[0, j] = j * gp
 
     #initialize first column
-    for i in range(1,len(seq2)): 
-        A.append([i * gp])
+    for i in range(1, len(seq2)): 
+        A[i, 0] = i * gp
 
-    for i in range(1,len(seq2)):
-        currentRow = A[i]
-        for j in range(1,len(seq1)):
+    for i in range(1, len(seq2)):
+        for j in range(1, len(seq1)):
+            x = 0
             if (seq2[i] == seq1[j]):
-                x = A[i-1][j-1] + mb #value from diagonal if they match
+                x = A[i-1, j-1] + mb #value from diagonal if they match
             else:
-                x = A[i-1][j-1] + mp #value from diagonal if they don't match
-            y = A[i][j-1] + gp #value from the left
-            z = A[i-1][j] + gp #value from above
-            currentRow.append(max(x,y,z))
-            
-        A[i] = currentRow
+                x = A[i-1, j-1] + mp #value from diagonal if they don't match
+
+            y = A[i, j-1] + gp #value from the left
+            z = A[i-1, j] + gp #value from above
+            A[i, j] = max(x, y, z)
 
     #figure out how to trace back
     i = len(seq2)-1
