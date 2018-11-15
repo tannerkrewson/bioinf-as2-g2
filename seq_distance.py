@@ -108,8 +108,8 @@ def align_gene(sequence1, sequence2):
             seq2spot = seq2spot - 1
         if traceBackDirections[i] == "b":
             newSeq2 = '-' + newSeq2
-            newSeq1 = sequence2[seq2spot] + newSeq2
-            seq2spot = seq2spot - 1
+            newSeq1 = sequence1[seq1spot] + newSeq1
+            seq1spot = seq1spot - 1
 
     return [newSeq1, newSeq2]
 
