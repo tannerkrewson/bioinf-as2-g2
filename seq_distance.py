@@ -1,11 +1,16 @@
 import math
 import numpy
 
-def find_distance( gene1, gene2 ):
+def find_distance( gene1, gene2, i, j, distance_matrix ):
 
+    print("Finding distance between seq", i, "and seq", j)
     aligned_genes = align_gene( gene1, gene2 )
     
-    return dK2P( aligned_genes[0], aligned_genes[1] )
+    distance = dK2P( aligned_genes[0], aligned_genes[1] )
+
+    distance_matrix[i][j] = distance
+
+    return distance
 
 #x and y are the two sequences being compared 
 def dK2P( x, y): 

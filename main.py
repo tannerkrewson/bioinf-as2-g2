@@ -1,6 +1,7 @@
 from readfasta import readfasta
 import glob, os
 import numpy
+import multiprocessing
 
 from tree_analysis import build_clade_count_dict, clade_search
 from bootstrapping import generate_bootstrap_genes, calculate_confidences
@@ -52,12 +53,18 @@ def generate_tree( genes ):
     # find the distance between each gene
     distance_matrix = numpy.zeros((len(genes), len(genes)), dtype=int)
 
+    pool = multiprocessing.Pool()
+
     for i in range( 0, len( genes ) ):
         for j in range( i+1, len( genes ) ):
-            distance_matrix[i][j] = find_distance( genes[i][1], genes[j][1] )
+            pool.apply_async(find_distance, args = (genes[i][1], genes[j][1], i, j, distance_matrix))
+    
+    pool.close()
+    pool.join()
 
     # use upgma to generate a tree from the distance matrix
     return calculate_upgma( distance_matrix )
 
 
-main()
+if __name__ == '__main__':
+    main()
