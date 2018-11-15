@@ -71,18 +71,18 @@ def align_gene(sequence1, sequence2):
     traceBackDirections = ""
     while i > 0 or j > 0:
         if (seq2[i] == seq1[j]):
-            x = A[i-1][j-1] + mb #value from diagonal if they match
+            x = A[i-1, j-1] + mb #value from diagonal if they match
         else:
-            x = A[i-1][j-1] + mp #value from diagonal if they don't match
-        y = A[i][j-1] + gp #value from the left
-        z = A[i-1][j] + gp #value from above
+            x = A[i-1, j-1] + mp #value from diagonal if they don't match
+        y = A[i, j-1] + gp #value from the left
+        z = A[i-1, j] + gp #value from above
 
-        if A[i][j] == x and i >= 0 and j >= 0:
+        if A[i, j] == x and i >= 0 and j >= 0:
             #trace back to the diagonal
             traceBackDirections = traceBackDirections + "d" 
             i = i - 1
             j = j - 1
-        elif A[i][j] == y and i >= 0 and j >= 0:
+        elif A[i, j] == y and i >= 0 and j >= 0:
             #trace back to the left
             traceBackDirections = traceBackDirections + "b"
             j = j - 1
@@ -112,3 +112,4 @@ def align_gene(sequence1, sequence2):
             seq2spot = seq2spot - 1
 
     return [newSeq1, newSeq2]
+
