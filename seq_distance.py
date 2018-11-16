@@ -5,12 +5,20 @@ from bootstrapping import align_alignments
 
 def find_distance( gene1, gene2, i, j):
 
-    print("finding distance between seq", i, "and seq", j)
-    #aligned_genes = align_gene( gene1[1], gene2[1] )
-    aligned_genes = align_alignments([[gene1[1], i]], [[gene2[1], j]])
-    distance = dK2P( aligned_genes[0][0], aligned_genes[1][0] )
+    if len(gene1[1]) > 2000:
+        newgene1 = [gene1[0], gene1[1][:int(len(gene1[1])/2)]]
+        newgene2 = [gene1[0], gene1[1][int(len(gene1[1])/2):]]
+        newgene3 = [gene1[0], gene1[1][:int(len(gene2[1])/2)]]
+        newgene4 = [gene1[0], gene1[1][int(len(gene2[1])/2):]]
 
-    return [ distance, i, j, [aligned_genes[0][0], aligned_genes[1][0]] ]
+        distance = (find_distance(newgene1, newgene2, i, j)[0] + find_distance(newgene3, newgene4), i, j)[0] / 2
+    else:
+        print("finding distance between seq", i, "and seq", j)
+        #aligned_genes = align_gene( gene1[1], gene2[1] )
+        aligned_genes = align_alignments([[gene1[1], i]], [[gene2[1], j]])
+        distance = dK2P( aligned_genes[0][0], aligned_genes[1][0] )
+
+    return [ distance, i, j ]#, [aligned_genes[0][0], aligned_genes[1][0]] ]
 
 #x and y are the two sequences being compared 
 def dK2P( seq1, seq2): 

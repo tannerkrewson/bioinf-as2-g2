@@ -81,11 +81,11 @@ def generate_tree( genes ):
         distance = result[0]
         i = result[1]
         j = result[2]
-        aligned_genes = result[3]
+        #aligned_genes = result[3]
 
         distance_matrix[i, j] = distance
-        alignments_matrix[i][j].append(aligned_genes[0])
-        alignments_matrix[i][j].append(aligned_genes[1])
+        #alignments_matrix[i][j].append(aligned_genes[0])
+        #alignments_matrix[i][j].append(aligned_genes[1])
         print(i, j)
 
     pool = multiprocessing.Pool()
@@ -111,7 +111,7 @@ def generate_tree( genes ):
             file.write(str(i) + "," + str(j) + "," + str(distance_matrix[i, j]) + "\n")
     file.close()
 
-    exit()
+    #exit()
 
     # store each alignment in a file
     if not os.path.isfile("alignments_database.csv"):
