@@ -51,7 +51,8 @@ def main():
 
 def generate_tree( genes ):
     # find the distance between each gene
-    distance_matrix = numpy.zeros((len(genes), len(genes)), dtype=int)
+    distance_matrix = numpy.zeros((len(genes), len(genes)), dtype=float)
+    read_precalculated_distances(distance_matrix)
 
     alignments_matrix = []
     for i in range( 0, len( genes ) ):
@@ -73,7 +74,8 @@ def generate_tree( genes ):
 
     for i in range( 0, len( genes ) ):
         for j in range( i+1, len( genes ) ):
-            pool.apply_async(find_distance, args = (genes[i], genes[j], i, j), callback = store_distance)
+            if distance_matrix[i, j] == 0:
+                pool.apply_async(find_distance, args = (genes[i], genes[j], i, j), callback = store_distance)
     
     pool.close()
     pool.join()
@@ -96,6 +98,17 @@ def generate_tree( genes ):
     # use upgma to generate a tree from the distance matrix
     return calculate_upgma( distance_matrix )
 
+
+def read_precalculated_distances( distance_matrix ):
+    file = open("distance_database.csv", "r") 
+    for line in file: 
+        things = line.split(",")
+        i = int(things[0])
+        j = int(things[1])
+        if len(things) == 5:
+            print(i, j)
+            print(distance_matrix[i])
+            distance_matrix[i, j] = float(things[4])
 
 if __name__ == '__main__':
     main()
