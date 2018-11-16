@@ -9,7 +9,7 @@ def find_distance( gene1, gene2, i, j):
     
     distance = dK2P( aligned_genes[0], aligned_genes[1] )
 
-    return [ distance, i, j ]
+    return [ distance, i, j, aligned_genes ]
 
 #x and y are the two sequences being compared 
 def dK2P( x, y): 
