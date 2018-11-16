@@ -64,7 +64,7 @@ def generate_tree( genes ):
     distance_matrix = numpy.zeros((len(genes), len(genes)), dtype=float)
 
     # if distances already calulated and stored in file, read them in
-    # read_precalculated_distances(distance_matrix)
+    read_precalculated_distances(distance_matrix)
 
     # fill the alignments matrix
     alignments_matrix = []
@@ -94,7 +94,7 @@ def generate_tree( genes ):
         for j in range( i+1, len( genes ) ):
             # if the distance and alignment don't exist, recalculate them
 
-            if distance_matrix[i, j] == 0 and len(alignments_matrix[i][j]) == 0:
+            if distance_matrix[i, j] == 0:
                 # parallel
                 pool.apply_async(find_distance, args = (genes[i], genes[j], i, j), callback = store_distance)
                 
@@ -105,12 +105,13 @@ def generate_tree( genes ):
     pool.join()
 
     # store the calculated distances in a file
-    if not os.path.isfile("distances_database.csv"):
-        file = open("distances_database.csv", "w")
-        for i in range( 0, len( genes ) ):
-            for j in range( i+1, len( genes ) ):
-                file.write(str(i) + "," + str(j) + "," + str(distance_matrix[i, j]) + "\n")
-        file.close()
+    file = open("distances_database_new.csv", "w")
+    for i in range( 0, len( genes ) ):
+        for j in range( i+1, len( genes ) ):
+            file.write(str(i) + "," + str(j) + "," + str(distance_matrix[i, j]) + "\n")
+    file.close()
+
+    exit()
 
     # store each alignment in a file
     if not os.path.isfile("alignments_database.csv"):
@@ -161,8 +162,8 @@ def read_precalculated_distances( distance_matrix ):
         things = line.split(",")
         i = int(things[0])
         j = int(things[1])
-        if len(things) == 5:
-            distance_matrix[i, j] = float(things[4])
+        if len(things) == 3:
+            distance_matrix[i, j] = float(things[2])
 
 def read_precalculated_alignments( alignments_matrix ):
     if not os.path.isfile("alignments_database.csv"):
