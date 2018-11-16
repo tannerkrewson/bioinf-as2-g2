@@ -4,6 +4,8 @@ import numpy
 def generate_bootstrap_genes( sequences ):
     new_sequences = ["" for i in sequences]
 
+    #randomly pick columns from the progressively aligned sequences
+    #and append to the new list of sequences
     for i in range(len(sequences[0][0])):
         random_index = random.randint(0, len(sequences[0][0]) - 1)
         for j in range(len(sequences)):
@@ -12,11 +14,8 @@ def generate_bootstrap_genes( sequences ):
     return new_sequences
 
 def progressive_alignment( sequences, guide_tree, alignments ):
-  
-    #if type(guide_tree[0]) != tuple and type(guide_tree[1]) != tuple:
-    #    leaf_aligns = alignments[guide_tree[0]][guide_tree[1]]
-    #    return leaf_aligns
 
+    #recursive calls if a tree member is a tuple (not a leaf)
     if type(guide_tree[0]) == tuple:
         seq_1 = progressive_alignment( sequences, guide_tree[0], alignments )
     else:
@@ -26,14 +25,17 @@ def progressive_alignment( sequences, guide_tree, alignments ):
         seq_2 = progressive_alignment( sequences, guide_tree[1], alignments )
     else:
         seq_2 = [[sequences[guide_tree[1]][1], guide_tree[1]]]
+    #if the tree is a tuple (a leaf), alignment is called on the sequences
     
     return align_alignments(seq_1, seq_2)
 
 def align_alignments( alignment_1, alignment_2 ):
+    #core code written by Kimberlyn, repurposed by Domenic
     gp = -2.5
     mb = 1
     mp = -2
 
+    #initialize all of the sequences or alignments with a '-'
     for i in range(len(alignment_1)):
         alignment_1[i][0] = "-" + alignment_1[i][0]
     for i in range(len(alignment_2)):
@@ -49,6 +51,7 @@ def align_alignments( alignment_1, alignment_2 ):
     for i in range(0, len(alignment_2[0][0])): 
         A[i, 0] = i * (gp * len(alignment_2[0][0]))
 
+    #dp matrix calculation
     for i in range(1, len(alignment_2[0][0])):
         if (i % 100) == 0:
             print(i)
@@ -89,15 +92,21 @@ def align_alignments( alignment_1, alignment_2 ):
     #align with the trace back directions 
     seq1spot = len(alignment_1[0][0]) - 1
     seq2spot = len(alignment_2[0][0]) - 1
-    new_alignment_1 = [["", alignment_1[i][1]] for i in range(len(alignment_1))]
-    new_alignment_2 = [["", alignment_2[i][1]] for i in range(len(alignment_2))]
+    #initialize a new list of alignments
+    new_alignment_1 = \
+    [["", alignment_1[i][1]] for i in range(len(alignment_1))]
+    new_alignment_2 = \
+    [["", alignment_2[i][1]] for i in range(len(alignment_2))]
     for i in range(len(traceBackDirections)):
+        #choose the direction based on current instruction
         if traceBackDirections[i] == "d":
             for j in range(len(alignment_1)):
-                new_alignment_1[j][0] = alignment_1[j][0][seq1spot] + new_alignment_1[j][0]
+                new_alignment_1[j][0] = alignment_1[j][0][seq1spot] + \
+                new_alignment_1[j][0]
 
             for j in range(len(alignment_2)):
-                new_alignment_2[j][0] = alignment_2[j][0][seq2spot] + new_alignment_2[j][0]
+                new_alignment_2[j][0] = alignment_2[j][0][seq2spot] + \
+                new_alignment_2[j][0]
 
             seq1spot = seq1spot - 1
             seq2spot = seq2spot - 1
@@ -106,23 +115,27 @@ def align_alignments( alignment_1, alignment_2 ):
                 new_alignment_1[j][0] = '-' + new_alignment_1[j][0]
 
             for j in range(len(alignment_2)):
-                new_alignment_2[j][0] = alignment_2[j][0][seq2spot] + new_alignment_2[j][0]
+                new_alignment_2[j][0] = alignment_2[j][0][seq2spot] + \
+                new_alignment_2[j][0]
 
             seq2spot = seq2spot - 1
         if traceBackDirections[i] == "b":
             for j in range(len(alignment_1)):
-                new_alignment_1[j][0] = alignment_1[j][0][seq1spot] + new_alignment_1[j][0]
+                new_alignment_1[j][0] = alignment_1[j][0][seq1spot] + \
+                new_alignment_1[j][0]
 
             for j in range(len(alignment_2)):
                 new_alignment_2[j][0] = '-' + new_alignment_2[j][0]
 
             seq1spot = seq1spot - 1
 
+    #append the lists of alignments to each other
     new_alignments = new_alignment_1 + new_alignment_2
 
     return new_alignments
 
 def calculate_cell_addition( alignment_1, alignment_2, i, j ):
+    #calculates the value to add to a cell given the alignments
     mb = 1
     mp = -2
     cell_addition = 0
@@ -137,6 +150,7 @@ def calculate_cell_addition( alignment_1, alignment_2, i, j ):
     return cell_addition
 
 def reorder_alignments(aligns):
+    #sorts the alignments by their sequence number
     new_align_list = [[] for i in range(len(aligns))]
     
     for align in aligns:
@@ -145,6 +159,8 @@ def reorder_alignments(aligns):
     return new_align_list
 
 def calculate_confidences( clade_count_dict, bootstrap_num ):
+    #calculates the confidence of each clade based on counts and number of
+    #bootstraps run
     confidences = {}
 
     for i, j in clade_count_dict.items():

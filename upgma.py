@@ -38,10 +38,12 @@ def calculate_upgma( distance_matrix ):
         drop_seq( new_matrix, Y )
 
         for i in range(0, X):
-            new_matrix[i][X] = find_avg_distance( seq_map[i], seq_map[X], distance_matrix )
+            new_matrix[i][X] = \
+            find_avg_distance( seq_map[i], seq_map[X], distance_matrix )
 
         for j in range( X+1, len( new_matrix ) ):
-            new_matrix[X][j] = find_avg_distance( seq_map[X], seq_map[j], distance_matrix )
+            new_matrix[X][j] = \
+            find_avg_distance( seq_map[X], seq_map[j], distance_matrix )
 
     return ( seq_tree[0], seq_tree[1] )
 

@@ -4,7 +4,8 @@ import numpy
 import multiprocessing
 
 from tree_analysis import build_clade_count_dict, clade_search
-from bootstrapping import generate_bootstrap_genes, calculate_confidences, progressive_alignment, reorder_alignments
+from bootstrapping import generate_bootstrap_genes, calculate_confidences, \
+progressive_alignment, reorder_alignments
 from seq_distance import find_distance, dK2P
 from upgma import calculate_upgma
 
@@ -33,16 +34,17 @@ def main():
 
     BOOTSTRAP_TIMES = 20
     
-    multi_aligned_sequences = progressive_alignment(genes, original_tree[0], original_tree[1])
+    multi_aligned_sequences = \
+    progressive_alignment(genes, original_tree[0], original_tree[1])
 
     multi_aligned_sequences = reorder_alignments(multi_aligned_sequences)
 
     for sequence in multi_aligned_sequences:
         print(sequence[0][:120])
 
-    # count each clade in bootstrapped trees that match a clade from the original tree
+    #count each clade in bootstrap trees matching a clade from original tree
     for i in range (0, BOOTSTRAP_TIMES):
-        bootstrapped_genes = generate_bootstrap_genes( multi_aligned_sequences )
+        bootstrapped_genes = generate_bootstrap_genes(multi_aligned_sequences)
 
         this_tree = generate_boots_tree( bootstrapped_genes )
 
@@ -51,8 +53,9 @@ def main():
 
         clade_search( this_tree, clade_count_dict )
 
-    # return a dictionary containing the clades as keys mapped to their confidence
-    clade_confidences = calculate_confidences( clade_count_dict, BOOTSTRAP_TIMES )
+    # return a dict containing the clades as keys mapped to their confidence
+    clade_confidences = \
+    calculate_confidences( clade_count_dict, BOOTSTRAP_TIMES )
 
     for clade, confidence in clade_confidences.items():
         print("clade: ", clade)
@@ -96,7 +99,8 @@ def generate_tree( genes ):
 
             if distance_matrix[i, j] == 0:
                 # parallel
-                pool.apply_async(find_distance, args = (genes[i], genes[j], i, j), callback = store_distance)
+                pool.apply_async(find_distance, args = \
+                    (genes[i], genes[j], i, j), callback = store_distance)
                 
                 # non-parallel
                 # store_distance(find_distance(genes[i], genes[j], i, j))
@@ -108,7 +112,8 @@ def generate_tree( genes ):
     file = open("distances_database_new.csv", "w")
     for i in range( 0, len( genes ) ):
         for j in range( i+1, len( genes ) ):
-            file.write(str(i) + "," + str(j) + "," + str(distance_matrix[i, j]) + "\n")
+            file.write(str(i) + "," + str(j) + "," + \
+                str(distance_matrix[i, j]) + "\n")
     file.close()
 
     #exit()
@@ -119,7 +124,9 @@ def generate_tree( genes ):
         for i in range( 0, len( genes ) ):
             for j in range( i+1, len( genes ) ):
                 if len(alignments_matrix[i][j]) == 2:
-                    file.write(str(i) + "," + str(j) + "," + alignments_matrix[i][j][0] + "," + alignments_matrix[i][j][1] + "\n")
+                    file.write(str(i) + "," + str(j) + "," + \
+                        alignments_matrix[i][j][0] + "," + \
+                        alignments_matrix[i][j][1] + "\n")
         file.close()
 
     # use upgma to generate a tree from the distance matrix
@@ -140,7 +147,8 @@ def generate_boots_tree( genes ):
 
     for i in range( 0, len( genes ) ):
         for j in range( i+1, len( genes ) ):
-            pool.apply_async(find_boots_distance, args = (genes[i], genes[j], i, j), callback = store_distance)
+            pool.apply_async(find_boots_distance, args = \
+                (genes[i], genes[j], i, j), callback = store_distance)
     
     pool.close()
     pool.join()
