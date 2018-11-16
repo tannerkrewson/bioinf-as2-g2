@@ -40,9 +40,9 @@ def dK2P( seq1, seq2):
     return distance
 
 def align_gene(sequence1, sequence2):
-    gp = -3.5 #gap penalty
+    gp = -2 #gap penalty
     mb = 1  #match bonus
-    mp = -3 #mismatch penalty
+    mp = -1 #mismatch penalty
 
     #make sure they aren't the same
     if sequence1 == sequence2:
