@@ -31,9 +31,9 @@ def progressive_alignment( sequences, guide_tree, alignments ):
 
 def align_alignments( alignment_1, alignment_2 ):
     #core code written by Kimberlyn, repurposed by Domenic
-    gp = -2.5
+    gp = -3.5
     mb = 1
-    mp = -2
+    mp = -3
 
     #initialize all of the sequences or alignments with a '-'
     for i in range(len(alignment_1)):
