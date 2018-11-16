@@ -54,6 +54,7 @@ def generate_tree( genes ):
     distance_matrix = numpy.zeros((len(genes), len(genes)), dtype=float)
     read_precalculated_distances(distance_matrix)
 
+    # fill the alignments matrix
     alignments_matrix = []
     for i in range( 0, len( genes ) ):
         new_row = []
@@ -65,10 +66,11 @@ def generate_tree( genes ):
         distance = result[0]
         i = result[1]
         j = result[2]
+        aligned_genes = result[3]
 
         distance_matrix[i, j] = distance
-        alignments_matrix[i][j].append(result[3][0])
-        alignments_matrix[i][j].append(result[3][1])
+        alignments_matrix[i][j].append(aligned_genes[0])
+        alignments_matrix[i][j].append(aligned_genes[1])
 
     pool = multiprocessing.Pool()
 
@@ -80,20 +82,23 @@ def generate_tree( genes ):
     pool.close()
     pool.join()
 
+    # store the calculated distances in a file
     file = open("distances.csv", "w")
     for i in range( 0, len( genes ) ):
         for j in range( i+1, len( genes ) ):
           file.write(str(i) + "," + str(j) + "," + str(distance_matrix[i, j]) + "\n")
     file.close()
 
-##    for i in range( 0, len( genes ) ):
-##        for j in range( i+1, len( genes ) ):
-##            file = open(str(i) + "," + str(j) + ".txt", "w")
-##            file.write(genes[i][0] + "\n")
-##            file.write(alignments_matrix[i][j][0] + "\n")
-##            file.write(genes[j][0] + "\n")
-##            file.write(alignments_matrix[i][j][1] + "\n")
-##            file.close()
+    # store each alignment in files
+    for i in range( 0, len( genes ) ):
+        for j in range( i+1, len( genes ) ):
+            if len(alignments_matrix[i][j]) == 2:
+                file = open(str(i) + "," + str(j) + ".txt", "w")
+                file.write(genes[i][0] + "\n")
+                file.write(alignments_matrix[i][j][0] + "\n")
+                file.write(genes[j][0] + "\n")
+                file.write(alignments_matrix[i][j][1] + "\n")
+                file.close()
 
 
     # use upgma to generate a tree from the distance matrix

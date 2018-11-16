@@ -142,7 +142,7 @@ def align_gene(sequence1, sequence2):
             new_seq2 = seq2_middle[seq2_spot] + new_seq2
             seq2_spot = seq2_spot - 1
         if trace_back_directions[i] == "b":
-            new_seq2 = '-' + newSeq2
+            new_seq2 = '-' + new_seq2
             new_seq1 = seq1_middle[seq1_spot] + new_seq1
             seq1_spot = seq1_spot - 1
 
