@@ -86,14 +86,14 @@ def generate_tree( genes ):
           file.write(str(i) + "," + str(j) + "," + str(distance_matrix[i, j]) + "\n")
     file.close()
 
-    for i in range( 0, len( genes ) ):
-        for j in range( i+1, len( genes ) ):
-            file = open(str(i) + "," + str(j) + ".txt", "w")
-            file.write(genes[i][0] + "\n")
-            file.write(alignments_matrix[i][j][0] + "\n")
-            file.write(genes[j][0] + "\n")
-            file.write(alignments_matrix[i][j][1] + "\n")
-            file.close()
+##    for i in range( 0, len( genes ) ):
+##        for j in range( i+1, len( genes ) ):
+##            file = open(str(i) + "," + str(j) + ".txt", "w")
+##            file.write(genes[i][0] + "\n")
+##            file.write(alignments_matrix[i][j][0] + "\n")
+##            file.write(genes[j][0] + "\n")
+##            file.write(alignments_matrix[i][j][1] + "\n")
+##            file.close()
 
 
     # use upgma to generate a tree from the distance matrix

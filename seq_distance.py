@@ -148,10 +148,3 @@ def align_gene(sequence1, sequence2):
 
     return [same_seq_begining + new_seq1 + same_seq_ending, same_seq_begining + new_seq2 + same_seq_ending]
 
-seq1 = "AGGGATGCATT"
-seq2 = "AAGCCACTACCTTTA"
-#seq1 = "ACCC"
-#seq2 = "ACC"
-a = align_gene(seq1, seq2)
-print(a)
-print(dK2P(a[0], a[1]))
