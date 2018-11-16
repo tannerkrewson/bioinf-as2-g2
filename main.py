@@ -24,19 +24,18 @@ def main():
 
     original_tree = generate_tree( genes )
 
-    print( original_tree )
+    print( original_tree[0] )
 
-    '''
     clade_count_dict = {}
 
     # count the clades of the original tree and add them as keys
-    build_clade_count_dict( original_tree, clade_count_dict )
+    build_clade_count_dict( original_tree[0], clade_count_dict )
 
     BOOTSTRAP_TIMES = 10
 
     # count each clade in bootstrapped trees that match a clade from the original tree
     for i in range (0, BOOTSTRAP_TIMES):
-        bootstrapped_genes = generate_bootstrap_genes( genes )
+        bootstrapped_genes = generate_bootstrap_genes( genes, original_tree[0], original_tree[1] )
 
         this_tree = generate_tree( bootstrapped_genes )
 
@@ -45,8 +44,8 @@ def main():
     # return a dictionary containing the clades as keys mapped to their confidence
     clade_confidences = calculate_confidences( clade_count_dict, BOOTSTRAP_TIMES )
 
-    # TODO: add function to append clade confidence values to the original tree
-    '''
+    for clade, confidence in clade_confidences.items():
+        print(clade + "" + confidence)
 
 
 def generate_tree( genes ):
@@ -102,7 +101,7 @@ def generate_tree( genes ):
 
 
     # use upgma to generate a tree from the distance matrix
-    return calculate_upgma( distance_matrix )
+    return [calculate_upgma( distance_matrix ), alignments_matrix]
 
 
 def read_precalculated_distances( distance_matrix ):
