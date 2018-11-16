@@ -1,14 +1,16 @@
 import math
 import numpy
 import random
+from bootstrapping import align_alignments
 
 def find_distance( gene1, gene2, i, j):
 
     print("finding distance between seq", i, "and seq", j)
-    aligned_genes = align_gene( gene1[1], gene2[1] )
-    distance = dK2P( aligned_genes[0], aligned_genes[1] )
+    #aligned_genes = align_gene( gene1[1], gene2[1] )
+    aligned_genes = align_alignments([[gene1[1]], [i]], [[gene2[1]], [j]])
+    distance = dK2P( aligned_genes[0][0], aligned_genes[1][0] )
 
-    return [ distance, i, j, aligned_genes ]
+    return [ distance, i, j, [aligned_genes[0][0], aligned_genes[1][0]] ]
 
 #x and y are the two sequences being compared 
 def dK2P( seq1, seq2): 
