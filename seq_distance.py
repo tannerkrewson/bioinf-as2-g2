@@ -4,9 +4,8 @@ import random
 
 def find_distance( gene1, gene2, i, j):
 
-    print("Finding distance between seq", i, "and seq", j)
+    print("finding distance between seq", i, "and seq", j)
     aligned_genes = align_gene( gene1[1], gene2[1] )
-    
     distance = dK2P( aligned_genes[0], aligned_genes[1] )
 
     return [ distance, i, j, aligned_genes ]
@@ -101,7 +100,6 @@ def align_gene(sequence1, sequence2):
     i = len(seq2)-1
     j = len(seq1)-1
 
-    
     trace_back_directions = ""
     while i > 0 or j > 0:
         if (seq2[i] == seq1[j]):
@@ -124,7 +122,6 @@ def align_gene(sequence1, sequence2):
             #trace back to above
             trace_back_directions = trace_back_directions + "u"
             i = i - 1
-
 
     #align with the trace back directions 
     seq1_spot = len(seq1_middle) - 1
