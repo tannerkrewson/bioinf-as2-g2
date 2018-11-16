@@ -12,16 +12,16 @@ def find_distance( gene1, gene2, i, j):
     return [ distance, i, j, aligned_genes ]
 
 #x and y are the two sequences being compared 
-def dK2P( x, y): 
+def dK2P( seq1, seq2): 
     count_transition = 0 #the total differ by transition
     count_transversion = 0 #the total that differ by transversion
 
     transitions = [('G','A'), ('A', 'G'), ('C', 'T'), ('T', 'C')]
     transversions = [('G','T'), ('T', 'G'), ('A', 'T'), ('T', 'A'),('G', 'C'), ('C', 'G'), ('A', 'C'), ('C', 'A')]
 
-    for i in range(len(x)):
-        if x[i] != y[i]:
-            site = (x[i], y[i])
+    for i in range(len(seq1)):
+        if seq1[i] != seq2[i]:
+            site = (seq1[i], seq2[i])
             for j in range(len(transitions)):
                 if site == transitions[j]:
                     count_transition = count_transition + 1
@@ -30,8 +30,8 @@ def dK2P( x, y):
                     count_transversion = count_transversion + 1
 
 
-    S = count_transition / len(x)
-    V = count_transversion / len(x)
+    S = count_transition / len(seq1) #fraction of sites differing by transition
+    V = count_transversion / len(seq1) #fraction of sites differing by transversion
 
 
     distance = -0.5 * math.log(1 - 2*S - V) - 0.25 * math.log(1 - 2*V) #K2P Formula 
@@ -39,41 +39,42 @@ def dK2P( x, y):
     return distance
 
 def align_gene(sequence1, sequence2):
-    gp = -2
-    mb = 1
-    mp = -1
+    gp = -2.5 #gap penalty
+    mb = 1  #match bonus
+    mp = -2 #mismatch penalty
 
     #make sure they aren't the same
     if sequence1 == sequence2:
         return [sequence1, sequence2]
 
-    #break the squence into parts
-
-
     #take off the parts that are the same at the begining 
-    n = 0 
-    while (sequence1[n] == sequence2[n]) and (n <= min(len(sequence1)-1, len(sequence2)-1)):
-        n = n + 1
-    sameSeqBegining = sequence1[0:n]
+    same_begin_index = 0 
+    while (sequence1[same_begin_index] == sequence2[same_begin_index]) and (same_begin_index <= min(len(sequence1)-1, len(sequence2)-1)):
+        same_begin_index = same_begin_index + 1
+    same_seq_begining = sequence1[0:same_begin_index]
+    reduced_seq1 = sequence1[same_begin_index:]
+    reduced_seq2 = sequence2[same_begin_index:]
 
 
     #take off the parts that are the same at the end
-    reducedSeq1 = sequence1[n:]
-    reducedSeq2 = sequence2[n:]
-    m1 = len(reducedSeq1)-1
-    m2 = len(reducedSeq2)-1
-    while (min(m1, m2) > 0) and reducedSeq1[m1] == reducedSeq2[m2]:
-        m1 = m1 - 1
-        m2 = m2 - 1
-    sameSeqEnding = reducedSeq1[m1+1:]
+    same_end_index1 = len(reduced_seq1)-1
+    same_end_index2 = len(reduced_seq2)-1
+    while (min(same_end_index1, same_end_index2) > 0) and reduced_seq1[same_end_index1] == reduced_seq2[same_end_index2]:
+        same_end_index1 = same_end_index1 - 1
+        same_end_index2 = same_end_index2 - 1
+    same_seq_ending = reduced_seq1[same_end_index1 + 1:]
+
+    
 
     #only looking at middle part that is differnt
-    seq1Middle = reducedSeq1[:m1+1]
-    seq2Middle = reducedSeq2[:m2+1]
-    seq1 = "-" + seq1Middle #seq1 is the sequence on the horizontal
-    seq2 = "-" + seq2Middle #seq2 is on the vertical
+    seq1_middle = reduced_seq1[:same_end_index1 + 1]
+    seq2_middle = reduced_seq2[:same_end_index2+1]
+    seq1 = "-" + seq1_middle #seq1 is the sequence on the horizontal
+    seq2 = "-" + seq2_middle #seq2 is on the vertical
+
 
     A = numpy.zeros((len(seq2), len(seq1)), dtype=int) #dynamic programing matrix wihtout letters
+
 
     #initialize first row
     for j in range(0, len(seq1)): 
@@ -87,62 +88,70 @@ def align_gene(sequence1, sequence2):
         if (i % 100) == 0:
             print(i)
         for j in range(1, len(seq1)):
-            x = 0
+            diagonal_option  = 0
             if (seq2[i] == seq1[j]):
-                x = A[i-1, j-1] + mb #value from diagonal if they match
+                diagonal_option = A[i-1, j-1] + mb #value from diagonal if they match
             else:
-                x = A[i-1, j-1] + mp #value from diagonal if they don't match
-
-            y = A[i, j-1] + gp #value from the left
-            z = A[i-1, j] + gp #value from above
-            A[i, j] = max(x, y, z)
+                diagonal_option = A[i-1, j-1] + mp #value from diagonal if they don't match
+            left_option = A[i, j-1] + gp #value from the left
+            upper_option = A[i-1, j] + gp #value from above
+            A[i, j] = max(diagonal_option, left_option, upper_option)
 
     #figure out how to trace back
     i = len(seq2)-1
     j = len(seq1)-1
+
     
-    traceBackDirections = ""
+    trace_back_directions = ""
     while i > 0 or j > 0:
         if (seq2[i] == seq1[j]):
-            x = A[i-1, j-1] + mb #value from diagonal if they match
+            diagonal_option = A[i-1, j-1] + mb #value from diagonal if they match
         else:
-            x = A[i-1, j-1] + mp #value from diagonal if they don't match
-        y = A[i, j-1] + gp #value from the left
-        z = A[i-1, j] + gp #value from above
+            diagonal_option = A[i-1, j-1] + mp #value from diagonal if they don't match
+        left_option = A[i, j-1] + gp #value from the left
+        upper_option = A[i-1, j] + gp #value from above
 
-        if A[i, j] == x and i >= 0 and j >= 0:
+        if A[i, j] == diagonal_option and i >= 0 and j >= 0:
             #trace back to the diagonal
-            traceBackDirections = traceBackDirections + "d" 
+            trace_back_directions = trace_back_directions + "d" 
             i = i - 1
             j = j - 1
-        elif A[i, j] == y and i >= 0 and j >= 0:
+        elif A[i, j] == left_option and i >= 0 and j >= 0:
             #trace back to the left
-            traceBackDirections = traceBackDirections + "b"
+            trace_back_directions = trace_back_directions + "b"
             j = j - 1
         else:
             #trace back to above
-            traceBackDirections = traceBackDirections + "u"
+            trace_back_directions = trace_back_directions + "u"
             i = i - 1
 
+
     #align with the trace back directions 
-    seq1spot = len(seq1Middle) - 1
-    seq2spot = len(seq2Middle) - 1
-    newSeq1 = ""
-    newSeq2 = ""
-    for i in range(len(traceBackDirections)):
-        if traceBackDirections[i] == "d":
-            newSeq1 = seq1Middle[seq1spot] + newSeq1
-            newSeq2 = seq2Middle[seq2spot] + newSeq2
-            seq1spot = seq1spot - 1
-            seq2spot = seq2spot - 1
-        if traceBackDirections[i] == "u":
-            newSeq1 = '-' + newSeq1
-            newSeq2 = seq2Middle[seq2spot] + newSeq2
-            seq2spot = seq2spot - 1
-        if traceBackDirections[i] == "b":
-            newSeq2 = '-' + newSeq2
-            newSeq1 = seq1Middle[seq1spot] + newSeq1
-            seq1spot = seq1spot - 1
+    seq1_spot = len(seq1_middle) - 1
+    seq2_spot = len(seq2_middle) - 1
+    new_seq1 = ""
+    new_seq2 = ""
+    for i in range(len(trace_back_directions)):
+        if trace_back_directions[i] == "d":
+            new_seq1 = seq1_middle[seq1_spot] + new_seq1
+            new_seq2 = seq2_middle[seq2_spot] + new_seq2
+            seq1_spot = seq1_spot - 1
+            seq2_spot = seq2_spot - 1
+        if trace_back_directions[i] == "u":
+            new_seq1 = '-' + new_seq1
+            new_seq2 = seq2_middle[seq2_spot] + new_seq2
+            seq2_spot = seq2_spot - 1
+        if trace_back_directions[i] == "b":
+            new_seq2 = '-' + newSeq2
+            new_seq1 = seq1_middle[seq1_spot] + new_seq1
+            seq1_spot = seq1_spot - 1
 
-    return [sameSeqBegining + newSeq1 + sameSeqEnding, sameSeqBegining + newSeq2 + sameSeqEnding]
+    return [same_seq_begining + new_seq1 + same_seq_ending, same_seq_begining + new_seq2 + same_seq_ending]
 
+seq1 = "AGGGATGCATT"
+seq2 = "AAGCCACTACCTTTA"
+#seq1 = "ACCC"
+#seq2 = "ACC"
+a = align_gene(seq1, seq2)
+print(a)
+print(dK2P(a[0], a[1]))

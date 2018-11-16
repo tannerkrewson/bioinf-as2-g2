@@ -101,4 +101,4 @@ def print_mat( mat ):
         print( row )
     print()
 
-# test()
+test()

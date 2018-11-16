@@ -95,6 +95,7 @@ def generate_tree( genes ):
             file.write(alignments_matrix[i][j][1] + "\n")
             file.close()
 
+
     # use upgma to generate a tree from the distance matrix
     return calculate_upgma( distance_matrix )
 
