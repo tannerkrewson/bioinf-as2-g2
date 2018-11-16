@@ -88,7 +88,7 @@ def generate_tree( genes ):
 
     for i in range( 0, len( genes ) ):
         for j in range( i+1, len( genes ) ):
-            file = open(i + "," + j + ".txt", "w")
+            file = open(str(i) + "," + str(j) + ".txt", "w")
             file.write(genes[i][0] + "\n")
             file.write(alignments_matrix[i][j][0] + "\n")
             file.write(genes[j][0] + "\n")
@@ -100,14 +100,14 @@ def generate_tree( genes ):
 
 
 def read_precalculated_distances( distance_matrix ):
+    if not os.path.isfile("distance_database.csv"):
+        return
     file = open("distance_database.csv", "r") 
     for line in file: 
         things = line.split(",")
         i = int(things[0])
         j = int(things[1])
         if len(things) == 5:
-            print(i, j)
-            print(distance_matrix[i])
             distance_matrix[i, j] = float(things[4])
 
 if __name__ == '__main__':
